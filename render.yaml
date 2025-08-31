@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: jobconnect
+    env: java
+    plan: free
+    buildCommand: ./mvnw clean install -DskipTests
+    startCommand: java -jar target/*.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
