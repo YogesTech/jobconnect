@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="layout :: layout(~{::content})"
+>
+  <head>
+    <title>My Applications</title>
+  </head>
+  <body>
+    <div th:fragment="content">
+      <h2>My Job Applications</h2>
+      <ul>
+        <li th:each="app : ${applications}">
+          Job: <span th:text="${app.job.title}"></span> -
+          <span th:text="${app.job.location}"></span><br />
+          Status: <span th:text="${app.status}"></span><br />
+          Resume: <a th:href="${app.resumeLink}" target="_blank">View Resume</a
+          ><br />
+          Cover Letter: <span th:text="${app.coverLetter}"></span> <br /><br />
+        </li>
+      </ul>
+      <a href="/seeker/jobs">Back to Jobs</a>
+    </div>
+  </body>
+</html>

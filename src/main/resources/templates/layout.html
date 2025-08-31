@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
+  <head>
+    <title>JobConnect</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <header>
+      <h2>JobConnect</h2>
+      <nav>
+        <a href="/">Home</a>
+
+        <!-- Only for Job Seekers -->
+        <span
+          th:if="${#authorization.expression('hasAuthority(''JOB_SEEKER'')')}"
+        >
+          <a href="/seeker/jobs">Jobs</a>
+          <a href="/seeker/myApplications">My Applications</a>
+        </span>
+
+        <!-- Only for Employers -->
+        <span
+          th:if="${#authorization.expression('hasAuthority(''EMPLOYER'')')}"
+        >
+          <a href="/employer/dashboard">Employer Dashboard</a>
+          <a th:href="@{/employer/jobs}">My Job Postings</a>
+        </span>
+
+        <form
+          th:action="@{/logout}"
+          method="post"
+          class="logout-form"
+          style="display: inline"
+        >
+          <button type="submit">Logout</button>
+        </form>
+      </nav>
+
+      <hr />
+    </header>
+
+    <main>
+      <div th:replace="${content}"></div>
+    </main>
+
+    <footer>
+      <hr />
+      <p>© 2025 JobConnect</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="layout :: layout(~{::content})"
+>
+  <head>
+    <title>My Job Postings</title>
+  </head>
+  <body>
+    <div th:fragment="content">
+      <h2>My Job Postings</h2>
+
+      <div class="job-list">
+        <div class="job-card" th:each="job : ${jobs}">
+          <h3 th:text="${job.title}"></h3>
+          <p class="meta">
+            <b>Company:</b> <span th:text="${job.companyName}"></span>
+          </p>
+          <p class="meta">
+            <b>Location:</b> <span th:text="${job.location}"></span>
+          </p>
+          <p><b>Description:</b> <span th:text="${job.description}"></span></p>
+          <p><b>Deadline:</b> <span th:text="${job.deadline}"></span></p>
+          <p><b>Salary:</b> <span th:text="${job.salary}"></span></p>
+
+          <div class="actions">
+            <a th:href="@{'/employer/editJob/' + ${job.id}}">✏️ Edit</a>
+            <a th:href="@{'/employer/deleteJob/' + ${job.id}}">🗑 Delete</a>
+            <a th:href="@{'/employer/applications/' + ${job.id}}"
+              >📄 View Applications</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

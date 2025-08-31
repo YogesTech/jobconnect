@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="layout :: layout(~{::content})"
+>
+  <body>
+    <div th:fragment="content">
+      <h2>Employer Dashboard</h2>
+
+      <!-- Job Posting Form -->
+      <form th:action="@{/employer/addJob}" method="post" th:object="${job}">
+        <label>Title:</label>
+        <input type="text" th:field="*{title}" required />
+
+        <label>Company Name:</label>
+        <input type="text" th:field="*{companyName}" required />
+
+        <label>Description:</label>
+        <textarea th:field="*{description}" required></textarea>
+
+        <label>Location:</label>
+        <input type="text" th:field="*{location}" required />
+
+        <label>Salary:</label>
+        <input
+          type="text"
+          th:field="*{salary}"
+          placeholder="e.g. ₹50,000/month"
+          required
+        />
+
+        <label>Deadline:</label>
+        <input
+          type="text"
+          th:field="*{deadline}"
+          placeholder="e.g. 2025-12-31"
+          required
+        />
+
+        <button type="submit">Post Job</button>
+      </form>
+    </div>
+  </body>
+</html>
