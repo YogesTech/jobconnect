@@ -9,12 +9,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.yogesh.jobconnect.security.CustomSuccessHandler;
 import com.yogesh.jobconnect.security.CustomUserDetailsService;
+import com.yogesh.jobconnect.security.JwtAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
+    @Autowired private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     // Bean to encrypt passwords using BCrypt
     @Bean
@@ -22,35 +25,26 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Autowired
-    private CustomSuccessHandler successHandler;
-
     // Custom security rules
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> {})
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/jobs", "/api/jobs/**", "/api/auth/**").permitAll()
+                        .requestMatchers("/api/applications/**").authenticated()
+                        .requestMatchers("/api/employer/**").hasAuthority("EMPLOYER")
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/v3/api-docs.yaml")
-                        .permitAll().requestMatchers("/seeker/**").hasAuthority("JOB_SEEKER")
-                        .requestMatchers("/employer/**").hasAuthority("EMPLOYER")
-                        .requestMatchers("/signup", "/login", "/", "/css/**", "/js/**").permitAll()
-                        .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .loginPage("/login") // show m login page
-                        .loginProcessingUrl("/login") // the POST request for authentication
-                        .successHandler(successHandler) // custom redirect after login
-                        .failureUrl("/login?error=true") // on failure
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .permitAll());
+                        .permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .anyRequest().authenticated());
 
         return http.build();
     }
